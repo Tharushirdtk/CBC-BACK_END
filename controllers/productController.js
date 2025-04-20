@@ -81,3 +81,36 @@ export function createProduct(req, res) {
             });
           });
       }
+
+
+      export async function getProductById(req, res) {
+        try {
+          const productId = req.params.productId;
+      
+          const product = await Product.findOne({ productId: productId });
+      
+          res.json(product);
+        } catch (e) {
+          res.status(500).json({
+            e,
+          });
+        }
+      }
+      
+      export async function searchProducts(req, res) {
+        const query = req.params.query;
+        try {
+          const products = await Product.find({
+            $or: [
+              { productName: { $regex: query, $options: "i" } },
+              { altNames: { $elemMatch: { $regex: query, $options: "i" } } },
+            ],
+          });
+      
+          res.json(products);
+        } catch (e) {
+          res.status(500).json({
+            e,
+          });
+        }
+      }
